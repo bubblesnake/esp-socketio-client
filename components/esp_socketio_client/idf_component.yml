@@ -1,0 +1,9 @@
+version: "0.0.1"
+description: Socket.IO protocol client for ESP-IDF
+url: https://github.com/espressif/esp-protocols/tree/master/components/esp_socketio_client
+dependencies:
+  idf:
+    version: ">=5.0"
+  espressif/esp_websocket_client:
+    version: '>=1.2.3'
+    public: true
