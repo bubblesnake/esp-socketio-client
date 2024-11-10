@@ -3,24 +3,17 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#include <stdio.h>
-#include "esp_log.h"
+#include <esp_log.h>
 #include "nvs_flash.h"
 #include "protocol_examples_common.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
-#include "freertos/event_groups.h"
-
 #include "esp_system.h"
 #include "esp_event.h"
-#include "esp_log.h"
 #include "esp_netif.h"
 #include "esp_socketio_client.h"
 
 static const char *TAG = "socketio";
-static esp_socketio_packet_handle_t tx_packet = NULL;
+static esp_socketio_packet_handle_t tx_packet_handle = NULL;
 
 static void log_error_if_nonzero(const char *message, int error_code)
 {
@@ -99,17 +92,20 @@ static void socketio_event_handler(void *handler_args, esp_event_base_t base, in
     {
     case SOCKETIO_EVENT_OPENED:
         ESP_LOGI(TAG, "Received Socket.IO OPEN packet.");
-        esp_socketio_client_connect_nsp(data->client, NULL);
+        esp_socketio_client_connect_nsp(data->client, NULL, NULL);
         break;
 
     case SOCKETIO_EVENT_NS_CONNECTED:
         char * nsp = esp_socketio_packet_get_nsp(packet);
         if (strcmp(nsp, "/") == 0) {
             ESP_LOGI(TAG, "Socket.IO connected to default namespace \"/\"");
-            esp_socketio_client_connect_nsp(data->client, "/chat");
+            // Connecting to "/chat" namespace
+            cJSON *json = cJSON_CreateObject();
+            cJSON_AddStringToObject(json, "token", "!@#$%^&*()-=_+");
+            esp_socketio_client_connect_nsp(data->client, "/chat", json);
         } else {
             ESP_LOGI(TAG, "Socket.IO connected to namespace: \"%s\"", nsp);
-            if (esp_socketio_packet_set_header(tx_packet, EIO_PACKET_TYPE_MESSAGE, SIO_PACKET_TYPE_BINARY_EVENT, nsp, 0) == ESP_OK) {
+            if (esp_socketio_packet_set_header(tx_packet_handle, EIO_PACKET_TYPE_MESSAGE, SIO_PACKET_TYPE_BINARY_EVENT, nsp, 0) == ESP_OK) {
                 cJSON *array = cJSON_CreateArray();
                 cJSON_AddItemToArray(array, cJSON_CreateString("hello"));
                 cJSON_AddItemToArray(array, cJSON_CreateNumber(1));
@@ -123,13 +119,13 @@ static void socketio_event_handler(void *handler_args, esp_event_base_t base, in
                 cJSON_AddBoolToObject(bin_object_2, "_placeholder", true);
                 cJSON_AddNumberToObject(bin_object_2, "num", 1);
                 cJSON_AddItemToArray(array, bin_object_2);
-                esp_socketio_packet_set_json(tx_packet, array);
+                esp_socketio_packet_set_json(tx_packet_handle, array);
                 ESP_LOGI(TAG, "address of bin_object_1: %p, size: %lu", (void *)bin_object_1, sizeof(cJSON *));
                 ESP_LOGI(TAG, "address of bin_object_2: %p, size: %lu", (void *)bin_object_2, sizeof(cJSON *));
-                esp_socketio_packet_add_binary_data(tx_packet, (unsigned char *)&bin_object_1, sizeof(cJSON *), true);
-                esp_socketio_packet_add_binary_data(tx_packet, (unsigned char *)&bin_object_2, sizeof(cJSON *), true);
-                esp_socketio_client_send_data(data->client, tx_packet);
-                esp_socketio_packet_reset(tx_packet);
+                esp_socketio_packet_add_binary_data(tx_packet_handle, (unsigned char *)&bin_object_1, sizeof(cJSON *), true);
+                esp_socketio_packet_add_binary_data(tx_packet_handle, (unsigned char *)&bin_object_2, sizeof(cJSON *), true);
+                esp_socketio_client_send_data(data->client, tx_packet_handle);
+                esp_socketio_packet_reset(tx_packet_handle);
             }
         }
         break;
@@ -159,7 +155,7 @@ static void socketio_app_start(void)
     ESP_LOGI(TAG, "Connecting to %s...", socketio_cfg.websocket_config.uri);
 
     esp_socketio_client_handle_t client = esp_socketio_client_init(&socketio_cfg);
-    tx_packet = esp_socketio_client_get_tx_packet(client);
+    tx_packet_handle = esp_socketio_client_get_tx_packet(client);
 
     esp_socketio_register_events(client, SOCKETIO_EVENT_ANY, socketio_event_handler, (void *)client);
 

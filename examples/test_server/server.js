@@ -76,6 +76,7 @@ io.on('connection', (socket) => {
 const chatNamespace = io.of('/chat');
 chatNamespace.on('connection', (socket) => {
   console.log('Client connected to the /chat namespace:', socket.id);
+  console.log('handshake data: ', socket.handshake.auth.token);
 
   // Demonstrate handling of various data types.
   socket.on("hello", (arg1, arg2, arg3, arg4, arg5, callback) => {

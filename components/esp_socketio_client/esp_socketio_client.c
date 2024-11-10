@@ -282,7 +282,7 @@ esp_err_t esp_socketio_client_start(esp_socketio_client_handle_t client)
     return esp_websocket_client_start(client->ws_client);
 }
 
-esp_err_t esp_socketio_client_connect_nsp(esp_socketio_client_handle_t client, const char *nsp)
+esp_err_t esp_socketio_client_connect_nsp(esp_socketio_client_handle_t client, const char *nsp, const cJSON *data)
 {
     esp_err_t ret = ESP_OK;
     if (!esp_websocket_client_is_connected(client->ws_client)
@@ -298,6 +298,10 @@ esp_err_t esp_socketio_client_connect_nsp(esp_socketio_client_handle_t client, c
 
     char *sio_connect = NULL;
     int len = (nsp == NULL) ? 2 : 3 + strlen(nsp);
+    char *json_string = cJSON_PrintUnformatted(data);
+    if (json_string != NULL) {
+        len += strlen(json_string);
+    }
     sio_connect = calloc(1, len);
     if (sio_connect == NULL) {
         ESP_LOGE(TAG, "Error allocating sio_connect memory.");
@@ -305,8 +309,13 @@ esp_err_t esp_socketio_client_connect_nsp(esp_socketio_client_handle_t client, c
     }
     sio_connect[0] = EIO_PACKET_TYPE_MESSAGE;
     sio_connect[1] = SIO_PACKET_TYPE_CONNECT;
+    char *ptr = &sio_connect[2];
     if (nsp != NULL) {
-        sprintf(&sio_connect[2], "%s,", nsp);
+        ptr += sprintf(&sio_connect[2], "%s,", nsp);
+    }
+    if (json_string != NULL) {
+        sprintf(ptr, "%s", json_string);
+        free(json_string);
     }
     int send_len = esp_websocket_client_send_text(client->ws_client, sio_connect, len, portMAX_DELAY);
     if (send_len > 0) {

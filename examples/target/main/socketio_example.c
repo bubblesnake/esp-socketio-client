@@ -131,14 +131,14 @@ static void socketio_event_handler(void *handler_args, esp_event_base_t base, in
     {
     case SOCKETIO_EVENT_OPENED:
         ESP_LOGI(TAG, "Received Socket.IO OPEN packet.");
-        esp_socketio_client_connect_nsp(data->client, NULL);
+        esp_socketio_client_connect_nsp(data->client, NULL, NULL);
         break;
 
     case SOCKETIO_EVENT_NS_CONNECTED:
         char * nsp = esp_socketio_packet_get_nsp(packet);
         if (strcmp(nsp, "/") == 0) {
             ESP_LOGI(TAG, "Socket.IO connected to default namespace \"/\"");
-            esp_socketio_client_connect_nsp(data->client, "/chat");
+            esp_socketio_client_connect_nsp(data->client, "/chat", NULL);
         } else {
             ESP_LOGI(TAG, "Socket.IO connected to namespace: \"%s\"", nsp);
             if (esp_socketio_packet_set_header(tx_packet, EIO_PACKET_TYPE_MESSAGE, SIO_PACKET_TYPE_BINARY_EVENT, nsp, 0) == ESP_OK) {

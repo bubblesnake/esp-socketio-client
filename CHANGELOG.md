@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.0.2]
+
+### Features
+
+* Socket.IO connect packet supports adding data payload.
+
+### Bug Fixes
+
+* Fix Linux target build error.
+
 ## [0.0.1]
 
 ### Initial Version

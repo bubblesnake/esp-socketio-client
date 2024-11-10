@@ -1,6 +1,5 @@
 idf_component_register(SRCS "main.c"
                     INCLUDE_DIRS
-                    "."
                     REQUIRES esp_socketio_client protocol_examples_common)
 
 if(CONFIG_GCOV_ENABLED)

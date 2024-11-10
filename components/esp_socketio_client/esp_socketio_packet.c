@@ -462,9 +462,8 @@ esp_err_t esp_socketio_packet_encode_message(esp_socketio_packet_handle_t packet
         ptr += sprintf(ptr, "%d", packet->event_id);
     }
 
-    sprintf(ptr, "%s", json_string);
-
     if (json_string != NULL) {
+        sprintf(ptr, "%s", json_string);
         free(json_string);
     }
     return ESP_OK;

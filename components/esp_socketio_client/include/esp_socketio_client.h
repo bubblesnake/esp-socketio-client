@@ -75,7 +75,7 @@ esp_err_t esp_socketio_client_start(esp_socketio_client_handle_t client);
  * @param nsp               The namespace name
  * @return esp_err_t
  */
-esp_err_t esp_socketio_client_connect_nsp(esp_socketio_client_handle_t client, const char *nsp);
+esp_err_t esp_socketio_client_connect_nsp(esp_socketio_client_handle_t client, const char *nsp, const cJSON *data);
 
 esp_err_t esp_socketio_client_send_data(esp_socketio_client_handle_t client, esp_socketio_packet_handle_t packet);
 
