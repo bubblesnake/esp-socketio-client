@@ -51,18 +51,12 @@ typedef struct {
 
 ESP_EVENT_DECLARE_BASE(SOCKETIO_EVENTS);         // declaration of the task events family
 
-
-// int esp_socketio_client_connect(esp_websocket_client_config_t *websocket_cfg);
-// int esp_socketio_client_disconnect();
-// int esp_socketio_client_send_text(uint8_t *payload, size_t length, uint32_t event_id);
-// int esp_socketio_client_send_raw(socketio_packet_type type, uint8_t *payload, size_t length, uint32_t event_id);
-
 esp_socketio_client_handle_t esp_socketio_client_init(const esp_socketio_client_config_t *config);
 
 /**
  * @brief      Open the Socketio.IO connection
  *
- * @param[in]  client  The client
+ * @param[in]  client  The client handle
  *
  * @return     esp_err_t
  */
@@ -73,10 +67,18 @@ esp_err_t esp_socketio_client_start(esp_socketio_client_handle_t client);
  *
  * @param client            The client handle
  * @param nsp               The namespace name
+ * @param data              Additional payload to be appended to the CONNECT packet
  * @return esp_err_t
  */
 esp_err_t esp_socketio_client_connect_nsp(esp_socketio_client_handle_t client, const char *nsp, const cJSON *data);
 
+/**
+ * @brief Send a Socket.IO packet
+ *
+ * @param client            The client handle
+ * @param packet            The handle of the packet to be sent
+ * @return esp_err_t
+ */
 esp_err_t esp_socketio_client_send_data(esp_socketio_client_handle_t client, esp_socketio_packet_handle_t packet);
 
 /**
@@ -97,8 +99,9 @@ esp_err_t esp_socketio_client_close(esp_socketio_client_handle_t client, TickTyp
 /**
  * @brief      Call esp_websocket_client_destroy and free all Socket.IO client resources.
  *             This function must be the last function to call for an session.
- *             It is the opposite of the esp_socketio_client_init function and must be called with the same handle as returned by esp_websocket_client_init.
- *             This might close all connections this handle has used.
+ *             It is the opposite of the esp_socketio_client_init function and must be called
+ *             with the same handle as returned by esp_websocket_client_init.
+ *             This may close all connections this handle has used.
  *
  *  Notes:
  *  - Cannot be called from the websocket event handler
@@ -109,6 +112,13 @@ esp_err_t esp_socketio_client_close(esp_socketio_client_handle_t client, TickTyp
  */
 esp_err_t esp_socketio_client_destroy(esp_socketio_client_handle_t client);
 
+/**
+ * @brief      Get the handle to a packet pre-allocated for transmission.
+ *
+ * @param[in]  client  The client
+ *
+ * @return     esp_socketio_packet_handle_t handle to the esp_socketio_packet struct.
+ */
 esp_socketio_packet_handle_t esp_socketio_client_get_tx_packet(esp_socketio_client_handle_t client);
 
 /**
