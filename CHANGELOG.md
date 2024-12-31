@@ -1,10 +1,16 @@
 # Changelog
 
+## [1.0.0]
+
+### Features
+
+* Change to a ESP-IDF component.
+
 ## [0.0.2]
 
 ### Features
 
-* Socket.IO connect packet supports adding data payload.
+* Socket.IO CONNECT packet supports adding data payload.
 
 ### Bug Fixes
 

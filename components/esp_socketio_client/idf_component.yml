@@ -1,6 +1,6 @@
-version: "0.0.2"
+version: "1.0.0"
 description: Socket.IO protocol client for ESP-IDF
-url: https://github.com/espressif/esp-protocols/tree/master/components/esp_socketio_client
+url: https://github.com/bubblesnake/esp-socketio-client/tree/main/components/esp_socketio_client
 dependencies:
   idf:
     version: ">=5.0"
