@@ -12,6 +12,6 @@ The ESP Socket.IO client is implemented as an ESP-IDF component. Please clone th
 
 ## Examples
 
-Get started with example test [example](./examples/).
+Get started with example test [example](./components/esp_socketio_client/examples/).
 
-Two examples are provided, one on Espressif [SoCs](./examples/target/), the other on [Linux](./examples/linux/). A [test server](./examples/test_server/) is also provided for test purpose.
+Two examples are provided, one on Espressif [SoCs](./components/esp_socketio_client/examples/target/), the other on [Linux](./components/esp_socketio_client/examples/linux/). A [test server](./components/esp_socketio_client/examples/test_server/) is also provided for test purpose.
