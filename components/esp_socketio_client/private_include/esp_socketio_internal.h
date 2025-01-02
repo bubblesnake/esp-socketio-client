@@ -7,13 +7,7 @@
 #ifndef _ESP_SOCKETIO_INTERNAL_H_
 #define _ESP_SOCKETIO_INTERNAL_H_
 
-// #include "sys/time.h"
-// #include "esp_transport.h"
-// #include "sys/socket.h"
-// #include "sys/queue.h"
 #include "esp_log.h"
-// #include "esp_tls.h"
-
 
 #ifdef __cplusplus
 extern "C" {
